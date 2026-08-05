@@ -1,0 +1,9 @@
+<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- 32px以下のラスタライズ用: 線を太らせ、要素を大きくした縮小最適化版 -->
+  <rect width="128" height="128" rx="30" fill="#101522"/>
+  <circle cx="64" cy="64" r="40" fill="none" stroke="#243050" stroke-width="16"/>
+  <circle cx="64" cy="64" r="40" fill="none" stroke="#58d5ff" stroke-width="16"
+          stroke-linecap="round" stroke-dasharray="188 252"
+          transform="rotate(-90 64 64)"/>
+  <circle cx="64" cy="64" r="12" fill="#58d5ff"/>
+</svg>
