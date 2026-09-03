@@ -1,10 +1,31 @@
 # RingTimer
 
+<p align="center">
+  <img src="docs/images/hero.png" alt="RingTimerのメイン画面。残り時間に合わせてリングが欠けていく" width="720">
+</p>
+
 リング(円形)デザインのタイマー・アラーム・ストップウォッチが使える、Windows/Mac用のデスクトップアプリです。
 
 このアプリは Electron・React・Vite という技術で作られていますが、使う上でこれらを理解する必要はありません。以下の手順どおりに進めれば動かせます。
 
 > このリポジトリには、自動生成される `node_modules` フォルダ・`dist` フォルダ・`release` フォルダは含まれていません。新しいパソコンで使い始める際は、まず「初期セットアップ」を行ってから、必要なものを作り直してください。
+
+## 画面
+
+3つのモードをタブで切り替えて使います。
+
+| Timer(タイマー) | Alarm(アラーム) | Stopwatch(ストップウォッチ) |
+| --- | --- | --- |
+| <img src="docs/images/mode-timer.png" alt="タイマーモード。25分がセットされた状態" width="300"> | <img src="docs/images/mode-alarm.png" alt="アラームモード。7時00分がセットされた状態" width="300"> | <img src="docs/images/mode-stopwatch.png" alt="ストップウォッチモード。経過時間を計測中" width="300"> |
+| 決めた長さをカウントダウンします。5/10/25/60分のボタンでよく使う時間をすぐにセットできます。 | 指定した時刻に鳴らします。「現在時刻取得」ボタンで今の時刻を呼び出せます。 | 経過時間を計測します。リングは1分で1周します。 |
+
+### ミニマル表示
+
+画面右下の縮小アイコンを押すと、ウィンドウが横長の細いバーに変わります。作業画面のすみに置いたまま残り時間を確認したいときに使います。元のサイズに戻すときは、バー右端のアイコンを押すか `Esc` キーを押してください。
+
+<img src="docs/images/hero.png" alt="通常表示のRingTimer" width="590">
+
+<img src="docs/images/minimal.png" alt="ミニマル表示のRingTimer。横長の細いバーに残り時間とボタンだけが並ぶ" width="190">
 
 ## 必要なもの
 
@@ -72,6 +93,12 @@ release/RingTimer-darwin-x64/     (Intel搭載Mac用)
 ## テーマ(見た目)のカスタマイズ
 
 アプリ右下の歯車アイコンから設定パネルを開くと、背景色・文字色・アクセントカラー・アラーム音を自由に変更できます。作った見た目は「テーマ」として保存でき、JSONファイルへの書き出し(エクスポート)や読み込み(インポート)もできます。
+
+最初から3つのテーマが用意されています。
+
+| Midnight | Studio | Forest |
+| --- | --- | --- |
+| <img src="docs/images/hero.png" alt="Midnightテーマ。濃紺の背景に水色のリング" width="300"> | <img src="docs/images/theme-studio.png" alt="Studioテーマ。焦げ茶の背景にオレンジのリング" width="300"> | <img src="docs/images/theme-forest.png" alt="Forestテーマ。深緑の背景に黄緑のリング" width="300"> |
 
 ### 背景に画像を表示する
 
