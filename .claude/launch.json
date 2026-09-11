@@ -12,6 +12,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["vite", "preview", "--host", "127.0.0.1", "--port", "4173"],
       "port": 4173
+    },
+    {
+      "name": "lp-static",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd ../RingTimer-LP && python3 -m http.server 4500"],
+      "port": 4500
     }
   ]
 }
