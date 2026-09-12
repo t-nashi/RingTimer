@@ -999,6 +999,12 @@ input.is-dimmed {
   font-size: 17px;
 }
 
+.ring-overlay__note {
+  margin: -12px 0 0;
+  color: color-mix(in srgb, var(--text), transparent 55%);
+  font-size: 13px;
+}
+
 .ring-overlay__actions {
   display: flex;
   gap: 14px;
@@ -1241,6 +1247,11 @@ input.is-dimmed {
 .app--minimal .ring-overlay__msg {
   margin: 0;
   font-size: 12px;
+}
+
+.app--minimal .ring-overlay__note {
+  margin: 0;
+  font-size: 10px;
 }
 
 .app--minimal .ring-overlay__dismiss {

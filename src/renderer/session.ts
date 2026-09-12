@@ -15,6 +15,8 @@ export type Session = {
   targetAt: number | null;
   elapsedBeforePauseMs: number;
   pausedRemainingMs: number | null;
+  /** ringing に入った時刻。鳴動していない間は null */
+  ringingSince: number | null;
 };
 
 export const emptyInput: TimeInput = { hours: 0, minutes: 5, seconds: 0 };
@@ -27,7 +29,8 @@ export function createInitialSession(mode: Mode = 'timer'): Session {
     startedAt: null,
     targetAt: null,
     elapsedBeforePauseMs: 0,
-    pausedRemainingMs: null
+    pausedRemainingMs: null,
+    ringingSince: null
   };
 }
 
@@ -67,7 +70,8 @@ export function startSession(session: Session, now = Date.now()): Session {
       startedAt: now,
       targetAt: null,
       elapsedBeforePauseMs: session.state === 'paused' ? session.elapsedBeforePauseMs : 0,
-      pausedRemainingMs: null
+      pausedRemainingMs: null,
+      ringingSince: null
     };
   }
 
@@ -78,7 +82,8 @@ export function startSession(session: Session, now = Date.now()): Session {
       startedAt: now,
       targetAt: nextAlarmTarget(session.input, now),
       elapsedBeforePauseMs: 0,
-      pausedRemainingMs: null
+      pausedRemainingMs: null,
+      ringingSince: null
     };
   }
 
@@ -94,7 +99,8 @@ export function startSession(session: Session, now = Date.now()): Session {
     startedAt: now,
     targetAt: now + duration,
     elapsedBeforePauseMs: 0,
-    pausedRemainingMs: null
+    pausedRemainingMs: null,
+    ringingSince: null
   };
 }
 
@@ -106,7 +112,8 @@ export function pauseSession(session: Session, now = Date.now()): Session {
       ...session,
       state: 'paused',
       elapsedBeforePauseMs: getDisplayMs(session, now),
-      startedAt: null
+      startedAt: null,
+      ringingSince: null
     };
   }
 
@@ -115,7 +122,8 @@ export function pauseSession(session: Session, now = Date.now()): Session {
     state: 'paused',
     pausedRemainingMs: Math.max(0, (session.targetAt ?? now) - now),
     startedAt: null,
-    targetAt: null
+    targetAt: null,
+    ringingSince: null
   };
 }
 
@@ -126,7 +134,8 @@ export function stopSession(session: Session): Session {
     startedAt: null,
     targetAt: null,
     elapsedBeforePauseMs: 0,
-    pausedRemainingMs: null
+    pausedRemainingMs: null,
+    ringingSince: null
   };
 }
 
@@ -137,7 +146,7 @@ export function dismissRinging(session: Session): Session {
 export function tickSession(session: Session, now = Date.now()): Session {
   if (session.state !== 'running' || session.mode === 'stopwatch') return session;
   if (session.targetAt !== null && now >= session.targetAt) {
-    return { ...session, state: 'ringing', pausedRemainingMs: 0 };
+    return { ...session, state: 'ringing', pausedRemainingMs: 0, ringingSince: now };
   }
   return session;
 }

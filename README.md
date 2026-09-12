@@ -100,6 +100,14 @@ release/RingTimer-darwin-x64/     (Intel搭載Mac用)
 | --- | --- | --- |
 | <img src="docs/images/hero.png" alt="Midnightテーマ。濃紺の背景に水色のリング" width="300"> | <img src="docs/images/theme-studio.png" alt="Studioテーマ。焦げ茶の背景にオレンジのリング" width="300"> | <img src="docs/images/theme-forest.png" alt="Forestテーマ。深緑の背景に黄緑のリング" width="300"> |
 
+### アラーム音の自動停止
+
+時間になってアラームが鳴りはじめたあと、一定時間が過ぎると**音だけが自動的に止まります**。停止までの時間は設定パネルの「Auto-stop」で選べます(Off / 30秒 / 1分 / 3分 / 5分 / 10分、初期値は5分)。
+
+音が自動的に止まったあとも、「時間になった」という表示は画面に残ります。席を外していても、戻ってきたときにアラームが鳴ったことが分かります。表示は「Dismiss」ボタンを押すと消えます。
+
+「Off」を選ぶと自動では止まらず、「Dismiss」を押すまで鳴り続けます。
+
 ### 背景に画像を表示する
 
 - 設定パネルの「Background Image URL」欄に、インターネット上に公開されている画像のURL(`http://...` や `https://...` で始まるもの)を入力し、「Show background image」をオンにすると、その画像がタイマーの背景に表示されます。画像の上には半透明の膜がかかるので、文字は隠れず読みやすいままです。

@@ -16,7 +16,7 @@ import {
   type Session,
   type TimeInput
 } from './session';
-import { loadState, saveState } from './storage';
+import { AUTO_STOP_OPTIONS, loadState, saveState } from './storage';
 import { builtInThemes, isTheme, makeUserTheme, type Theme } from './theme';
 
 const modeLabels: Record<Mode, string> = {
@@ -31,6 +31,15 @@ const RING_RADIUS = 136;
 const RING_CIRC = 2 * Math.PI * RING_RADIUS;
 
 const presetMinutes = [5, 10, 25, 60];
+
+const autoStopLabels: Record<number, string> = {
+  0: 'Off',
+  30: '30 sec',
+  60: '1 min',
+  180: '3 min',
+  300: '5 min',
+  600: '10 min'
+};
 
 const CUSTOM_THEME_ID = 'custom-draft';
 const SWATCH_SIZE = 26;
@@ -47,6 +56,7 @@ export function App() {
   const [alarmVolume, setAlarmVolume] = useState(loaded.alarmVolume);
   const [alarmMuted, setAlarmMuted] = useState(loaded.alarmMuted);
   const [minimal, setMinimal] = useState(loaded.minimal);
+  const [autoStopSec, setAutoStopSec] = useState(loaded.autoStopSec);
   const [focusedField, setFocusedField] = useState<keyof TimeInput>('minutes');
   const [themePanelOpen, setThemePanelOpen] = useState(false);
   const [savingName, setSavingName] = useState<string | null>(null);
@@ -103,6 +113,15 @@ export function App() {
     ringActive && remainFrac <= 0.05 ? 'ring-fill--danger' : ringActive && remainFrac <= 0.15 ? 'ring-fill--warn' : ''
   ].filter(Boolean).join(' ');
 
+  // 鳴動開始から autoStopSec 経過したら音だけ止める(鳴動表示とオーバーレイは残す)。
+  // now は 200ms 間隔で更新されるため、専用のタイマーを持たずに判定できる。
+  // Date.now() 基準なのでスリープ中の経過や再起動をまたいだ場合も正しく効く。
+  const soundAutoStopped =
+    session.state === 'ringing' &&
+    autoStopSec > 0 &&
+    session.ringingSince !== null &&
+    now - session.ringingSince >= autoStopSec * 1000;
+
   useEffect(() => {
     const timer = window.setInterval(() => {
       const nextNow = Date.now();
@@ -114,8 +133,8 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    saveState({ session, activeThemeId, userThemes, zoom, alarmVolume, alarmMuted, minimal });
-  }, [session, activeThemeId, userThemes, zoom, alarmVolume, alarmMuted, minimal]);
+    saveState({ session, activeThemeId, userThemes, zoom, alarmVolume, alarmMuted, minimal, autoStopSec });
+  }, [session, activeThemeId, userThemes, zoom, alarmVolume, alarmMuted, minimal, autoStopSec]);
 
   useEffect(() => {
     const el = swatchesRef.current;
@@ -152,7 +171,7 @@ export function App() {
   }, [activeTheme]);
 
   useEffect(() => {
-    if (session.state === 'ringing') {
+    if (session.state === 'ringing' && !soundAutoStopped) {
       // プレビュー再生中なら止めてから本鳴動に切り替える
       if (previewTimerRef.current !== null) {
         window.clearTimeout(previewTimerRef.current);
@@ -169,12 +188,12 @@ export function App() {
         });
       }
     } else {
-      notifiedRingingRef.current = false;
+      if (session.state !== 'ringing') notifiedRingingRef.current = false;
       stopAlarmAudio();
     }
 
     return () => stopAlarmAudio();
-  }, [activeTheme.alarmSound, session.mode, session.state, alarmVolume, alarmMuted]);
+  }, [activeTheme.alarmSound, session.mode, session.state, alarmVolume, alarmMuted, soundAutoStopped]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -389,7 +408,8 @@ export function App() {
       startedAt: now,
       targetAt: now + 60000,
       elapsedBeforePauseMs: 0,
-      pausedRemainingMs: null
+      pausedRemainingMs: null,
+      ringingSince: null
     }));
   }
 
@@ -489,6 +509,9 @@ export function App() {
       <div className="ring-overlay__panel">
         <p className="ring-overlay__time">{new Date(now).toLocaleTimeString()}</p>
         <p className="ring-overlay__msg">{session.mode === 'alarm' ? 'Alarm' : 'Time is up'}</p>
+        {soundAutoStopped && (
+          <p className="ring-overlay__note">Stopped automatically after {autoStopLabels[autoStopSec]}</p>
+        )}
         <div className="ring-overlay__actions">
           <button
             type="button"
@@ -907,6 +930,19 @@ export function App() {
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6.5 9H3v6h3.5L11 19zM15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" /></svg>
               )}
             </button>
+          </div>
+        </label>
+        <label>
+          <span>Auto-stop</span>
+          <div className="select-field">
+            <select
+              value={autoStopSec}
+              onChange={(event) => setAutoStopSec(Number(event.target.value))}
+            >
+              {AUTO_STOP_OPTIONS.map((seconds) => (
+                <option key={seconds} value={seconds}>{autoStopLabels[seconds]}</option>
+              ))}
+            </select>
           </div>
         </label>
         {confirmingDelete && (
